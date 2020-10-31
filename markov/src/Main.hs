@@ -1,22 +1,41 @@
 module Main where
 
 import FileIO
-import System.Environment
 import Train
 import Generator
 
 import Options.Applicative
+import Data.Semigroup((<>))
+
+data Args = Sample {
+    train :: Bool,
+    trainFile :: String,
+    modelFile :: String
+}
+
+args :: Parser Args
+args = Sample 
+    <$> switch (
+        long "train"
+        <> help "whether to train the model or not" )
+    <*> strOption ( 
+        long "trainFile"
+        <> metavar "TARGET"
+        <> help "file with training data" )
+    <*> strOption ( 
+        long "modelFile"
+        <> metavar "TARGET"
+        <> help "file with training data" )
+
+optsParser :: ParserInfo Args
+optsParser = info (args <**> helper)
+      ( fullDesc
+     <> progDesc "Print a greeting for TARGET"
+     <> header "hello - a test for optparse-applicative" )
 
 main :: IO ()
 main = do {
-  args <- getArgs;
-  trainString <- head args;
-  train <- boolFromString trainString;
-  trainSetFile <- if (train == True) then head (tail args) else Nothing;
-  wordMap <- if trainSetFile then (buildMap trainSetFile) else getMapFile;
-  generate wordMap
+    args <- execParser optsParser;
+    wordMap <- if (train args) then (buildMap (trainFile args)) else getMapFile (modelFile args);
+    generate wordMap
 }
-
-boolFromString :: String -> Bool
-boolFromString "False" = False
-boolFromString _ = True

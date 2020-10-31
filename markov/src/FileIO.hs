@@ -1,3 +1,4 @@
 module FileIO (getMapFile) where
 
-getMapFile = readFile "map.bin"
+getMapFile :: FilePath -> IO String
+getMapFile fileName = readFile fileName
