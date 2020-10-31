@@ -9,8 +9,8 @@ import Data.Semigroup((<>))
 
 data Args = Sample {
     train :: Bool,
-    trainFile :: String,
-    modelFile :: String
+    trainFile :: String
+    -- modelFile :: String
 }
 
 args :: Parser Args
@@ -22,10 +22,10 @@ args = Sample
         long "trainFile"
         <> metavar "TARGET"
         <> help "file with training data" )
-    <*> strOption ( 
-        long "modelFile"
-        <> metavar "TARGET"
-        <> help "file with training data" )
+    -- <*> strOption ( 
+    --     long "modelFile"
+    --     <> metavar "TARGET"
+    --     <> help "file with training data" )
 
 optsParser :: ParserInfo Args
 optsParser = info (args <**> helper)
@@ -36,6 +36,9 @@ optsParser = info (args <**> helper)
 main :: IO ()
 main = do {
     args <- execParser optsParser;
-    wordMap <- if (train args) then (buildMap (trainFile args)) else getMapFile (modelFile args);
-    generate wordMap
+    -- wordMap <- if (train args) then (buildMap (trainFile args)) else getMapFile (modelFile args);
+    putStrLn "Training model...";
+    wordMap <- buildMap (trainFile args);
+    putStrLn "Generating sequence...";
+    putStrLn "oi"
 }
